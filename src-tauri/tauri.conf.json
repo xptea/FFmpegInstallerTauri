@@ -1,12 +1,12 @@
 {
   "build": {
-    "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist"
   },
   "package": {
-    "productName": "ffmpeginstallertauri",
+    "productName": "FFmpeg Installer",
     "version": "0.1.0"
   },
   "tauri": {
@@ -15,29 +15,70 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$APPDATA/*", "C:\\ffmpeg\\**"]
+      },
+      "path": {
+        "all": true
+      },
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://github.com/*"]
       }
-    },
-    "windows": [
-      {
-        "title": "ffmpeginstallertauri",
-        "width": 800,
-        "height": 600
-      }
-    ],
-    "security": {
-      "csp": null
     },
     "bundle": {
       "active": true,
-      "targets": "all",
-      "identifier": "com.ffmpeginstallertauri.app",
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
-    }
+      ],
+      "identifier": "com.ffmpeg-installer.dev",
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "en-US"
+        }
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 600,
+        "resizable": true,
+        "title": "FFmpeg Installer",
+        "width": 800
+      }
+    ]
   }
 }

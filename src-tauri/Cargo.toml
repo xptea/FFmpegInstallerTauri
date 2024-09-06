@@ -11,13 +11,24 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1.0", features = ["shell-open"] }
+tauri = { version = "1.0", features = [ "http-all", "fs-all", "path-all", "shell-open"] }
 reqwest = { version = "0.11", features = ["stream", "json"] }
 zip = "0.6"
 futures-util = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+winapi = { version = "0.3", features = ["winuser", "minwindef"] }
+winreg = "0.10"
+dirs = "4.0"
+
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+
+[package.metadata.tauri-winres]
+OriginalFilename = "FFmpegInstaller.exe"
+LegalCopyright = ""
+ProductName = "FFmpeg Installer"
+FileDescription = "FFmpeg Installer"
+manifest = "FFmpegInstaller.exe.manifest"

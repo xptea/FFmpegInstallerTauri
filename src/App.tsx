@@ -4,69 +4,70 @@ import { listen } from "@tauri-apps/api/event";
 import "./App.css";
 
 interface ProgressPayload {
-  action: string;
-  progress: number;
+  message: string;
+  percent: number;
 }
 
 function App() {
-  const [status, setStatus] = useState("");
   const [installing, setInstalling] = useState(false);
-  const [action, setAction] = useState("");
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState<ProgressPayload>({ message: '', percent: 0 });
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
-    const unlisten = listen<ProgressPayload>("install_progress", (event) => {
-      setAction(event.payload.action);
-      setProgress(event.payload.progress);
+    const unsubscribe = listen<ProgressPayload>('progress', (event) => {
+      setProgress(event.payload);
     });
 
     return () => {
-      unlisten.then(f => f());
+      unsubscribe.then(f => f());
     };
   }, []);
 
-  async function installAll() {
+  const handleInstall = async () => {
     setInstalling(true);
-    setAction("");
-    setProgress(0);
-    setStatus("");
+    setStatus('idle');
+    setStatusMessage('');
+
     try {
-      await invoke("install_ffmpeg");
-      // The app will close automatically after installation, so we don't need to set a success status
+      await invoke('install_ffmpeg_and_skibidi');
+      setStatus('success');
+      setStatusMessage('Installation completed successfully!');
     } catch (error) {
-      setStatus(`Error: ${error}`);
+      setStatus('error');
+      setStatusMessage(`Error: ${error}`);
+    } finally {
       setInstalling(false);
-      console.error("Installation error:", error);
     }
-  }
+  };
 
   return (
     <div className="container">
       <div className="content">
-        <h1 className="title">FFmpeg & SkibidiSlicer Installer</h1>
-        <p className="subtitle">Quick setup for FFmpeg and SkibidiSlicer on Windows</p>
-        
+        <h1 className="title">FFmpeg Installer</h1>
+        <p className="subtitle">Install FFmpeg and SkibidiSlicer</p>
+
         <button
-          className={`install-button ${installing ? 'installing' : ''}`}
-          onClick={installAll}
+          className="install-button"
+          onClick={handleInstall}
           disabled={installing}
         >
-          {installing ? "Installing..." : "Install"}
+          {installing ? 'Installing...' : 'Install'}
         </button>
 
         {installing && (
           <div className="installation-progress">
-            <p className="progress-text">{action}</p>
+            <p className="progress-text">{progress.message}</p>
             <div className="progress-bar">
-              <div className="progress" style={{ width: `${progress}%` }}></div>
+              <div className="progress" style={{ width: `${progress.percent}%` }}></div>
             </div>
-            <p className="progress-percentage">{progress}%</p>
+            <p className="progress-percentage">{progress.percent.toFixed(1)}%</p>
           </div>
         )}
 
-        {status && (
-          <div className={`status-message ${status.includes('Error') ? 'error' : 'success'}`}>
-            <p>{status}</p>
+        {status !== 'idle' && (
+          <div className={`status ${status}`}>
+            {statusMessage}
           </div>
         )}
       </div>
