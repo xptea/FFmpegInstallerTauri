@@ -51,11 +51,8 @@ fn add_to_user_path(new_path: &str) -> Result<(), String> {
     Ok(())
 }
 
-
-
 #[tauri::command]
 async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
-    // Step 1: Check if FFmpeg is installed
     let ffmpeg_check = std::process::Command::new("ffmpeg")
         .arg("-version")
         .output();
@@ -79,7 +76,6 @@ async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
         }
     }
 
-    // Step 2: Download and Install FFmpeg
     let ffmpeg_url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip";
     let ffmpeg_install_path = PathBuf::from(r"C:\ffmpeg");
 
@@ -105,7 +101,7 @@ async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
         let percent = if total_size > 0 {
             (downloaded as f32 / total_size as f32) * 90.0
         } else {
-            50.0 // fallback if content length is unknown
+            50.0
         };
 
         send_progress(&window, "Downloading FFmpeg...", 10.0 + percent)?;
@@ -147,7 +143,6 @@ async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
     let ffmpeg_bin_path = r"C:\ffmpeg\ffmpeg-master-latest-win64-gpl\bin";
     add_to_user_path(ffmpeg_bin_path)?;
 
-    // Step 3: Download and Install Skibidi Slicer
     let skibidi_url = "https://github.com/xptea/installskibidi/releases/latest/download/Skibidy.Slicer_0.1.0_x64-setup.zip";
     let skibidi_install_path = PathBuf::from(r"C:\SkibidySlicer");
 
@@ -208,8 +203,7 @@ async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
 
     send_progress(&window, "Skibidi Slicer installation completed!", 100.0)?;
 
-    // Step 4: Launch the Skibidi Slicer installer
-    let installer_path = skibidi_install_path.join("Skibidy Slicer_0.1.0_x64-setup.exe"); // Update the path to the correct installer name
+    let installer_path = skibidi_install_path.join("Skibidy Slicer_0.1.0_x64-setup.exe");
     if installer_path.exists() {
         std::process::Command::new(installer_path)
             .spawn()
@@ -220,12 +214,9 @@ async fn install_ffmpeg_and_skibidi(window: Window) -> Result<(), String> {
         return Err(format!("Installer file not found at: {:?}", installer_path));
     }
     
-    // Close the application after launching the installer
     send_progress(&window, "Closing the app...", 100.0)?;
     std::process::exit(0);
-    
 }
-
 
 fn main() {
     tauri::Builder::default()
